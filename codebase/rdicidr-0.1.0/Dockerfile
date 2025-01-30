@@ -1,21 +1,23 @@
-FROM node:15 as builder
+FROM node:15-alpine as builder
 
-WORKDIR
+WORKDIR /app
 
-COPY
+COPY package*.json ./
 
-RUN 
+RUN npm install 
 
-COPY
+COPY . .
 
-RUN 
+RUN npm run build
 
-FROM
+FROM  node:15-alpine as runner
 
-WORKDIR
+WORKDIR /app
 
-COPY
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/node_modules ./node_modules
 
-RUN 
+EXPOSE 3000
 
-ENTRYPOINT 
+CMD [ "npx", "serve", "-s", "build", "-l", "3000" ]
